@@ -37,7 +37,7 @@ public:
         for(int i = 0; i < kinds_; ++i)
         {
             //std::cout << "theta: " << i << std::endl;
-            theta_.vector(i) += 0.001 * Gradient(y, x, i);
+            theta_.vector(i) += 0.0013 * Gradient(y, x, i);
             //std::cout << theta_.vector(i) << std::endl;
         }
 

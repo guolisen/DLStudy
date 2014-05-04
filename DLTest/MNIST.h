@@ -54,8 +54,8 @@ public:
             labelFin_.close();
     }
 
-    virtual boost::optional<IMAGE_DATA_VEC>& GetImageList(unsigned int size);
-    virtual boost::optional<LABLE_DATA_VEC>& GetLableList(unsigned int size);
+    virtual boost::optional<IMAGE_DATA_VEC> GetImageList(unsigned int fromImage, unsigned int toImage);
+    virtual boost::optional<LABLE_DATA_VEC> GetLableList(unsigned int fromImage, unsigned int toImage);
     virtual void PrintVec(boost::optional<mnist::IMAGE_DATA_VEC>& vec);
     virtual void PrintVec()
     {

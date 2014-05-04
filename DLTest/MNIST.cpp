@@ -60,30 +60,81 @@ bool MNIST::LoadLableData(unsigned int size)
 }
 
 
-boost::optional<IMAGE_DATA_VEC>& MNIST::GetImageList(unsigned int size)
+boost::optional<IMAGE_DATA_VEC> MNIST::GetImageList(unsigned int fromImage, unsigned int toImage)
 {
-    if(imageData_ && !imageData_->empty())
+    if(fromImage > toImage)
+    {
+        std::cout << "Argument Error" << std::endl;
+        imageData_ = boost::none;
         return imageData_;
+    }
+    if(imageData_ && !imageData_->empty())
+    {
+        if(imageData_->size() < toImage)
+        {
+            imageData_->clear();
+            imageFin_.close();
+        }
+        else
+        {
+            boost::optional<IMAGE_DATA_VEC> ret(std::vector<IMAGE_DATA>(imageData_->begin()+fromImage, imageData_->begin()+toImage));
+            return ret;
+        }
+    }
 
-    if(!LoadImageData(size))
+    if(!LoadImageData(toImage))
     {
         imageData_ = boost::none;
         return imageData_;
     }
-    return imageData_;
+
+    mnist::IMAGE_DATA_VEC::iterator iterStart = imageData_->begin();
+    mnist::IMAGE_DATA_VEC::iterator iterEnd = imageData_->begin();
+
+    for(int i=0; (iterStart != imageData_->end()) && (i < fromImage); ++iterStart, ++i);
+    for(int i=0; (iterEnd != imageData_->end()) && (i < toImage - 1); ++iterEnd, ++i);
+
+    boost::optional<IMAGE_DATA_VEC> ret(std::vector<IMAGE_DATA>(iterStart, iterEnd));
+
+    return ret;
 }
 
-boost::optional<LABLE_DATA_VEC>& MNIST::GetLableList(unsigned int size)
+boost::optional<LABLE_DATA_VEC> MNIST::GetLableList(unsigned int fromImage, unsigned int toImage)
 {
-    if(labelData_ && !labelData_->empty())
+    if(fromImage > toImage)
+    {
+        std::cout << "Argument Error" << std::endl;
+        labelData_ = boost::none;
         return labelData_;
+    }
+    if(labelData_ && !labelData_->empty())
+    {
+        if(labelData_->size() < toImage)
+        {
+            labelData_->clear();
+            labelFin_.close();
+        }
+        else
+        {
+            boost::optional<LABLE_DATA_VEC> ret(std::vector<LABLE_DATA>(labelData_->begin()+fromImage, labelData_->begin()+toImage));
+            return ret;
+        }
+    }
 
-    if(!LoadLableData(size))
+    if(!LoadLableData(toImage))
     {
         labelData_ = boost::none;
         return labelData_;
     }
-    return labelData_;
+
+    mnist::LABLE_DATA_VEC::iterator iterStart = labelData_->begin();
+    mnist::LABLE_DATA_VEC::iterator iterEnd = labelData_->begin();
+
+    for(int i=0; (iterStart != labelData_->end()) && (i < fromImage); ++iterStart, ++i);
+    for(int i=0; (iterEnd != labelData_->end()) && (i < toImage - 1); ++iterEnd, ++i);
+
+    boost::optional<LABLE_DATA_VEC> ret(std::vector<LABLE_DATA>(iterStart, iterEnd));
+    return ret;
 }
 
 void MNIST::PrintImage(const mnist::IMAGE_DATA& image)
